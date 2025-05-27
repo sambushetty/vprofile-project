@@ -17,6 +17,9 @@ pipeline {
        		NEXUS_LOGIN = 'nexuslogin'
 	    	SONARSERVER = 'sonarserver'
 	    	SONARSCANNER = 'sonarscanner'
+	    	registryCredential = 'ecr:us-east-1:awscreds'
+	    	appRegistry = //docker uri - copy post ecr is created
+		vprofileRegistry = //uri without vprofileimage name
     }
 
     stages {
@@ -88,5 +91,25 @@ pipeline {
 	)
  }
 }
+	    stage('Build App Image') {
+            steps {
+                script {
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./Docker-files/app/multistage/")    // it is in format name, tagnumber, path_of_dockerfile
+                }
+            }
+        }
+        
+        stage('Upload App Image') {
+          steps{
+            script {
+              docker.withRegistry( vprofileRegistry, registryCredential )           //it is in format ecr url followed by ecr credentials
+		    {                   
+                dockerImage.push("$BUILD_NUMBER")
+                dockerImage.push('latest')
+              }
+            }
+          }
+        }
+
     }
 }
