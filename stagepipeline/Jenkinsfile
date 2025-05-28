@@ -20,6 +20,9 @@ pipeline {
 	    	registryCredential = 'ecr:us-east-1:awscreds'
 	    	appRegistry = //docker uri - copy post ecr is created
 		vprofileRegistry = //uri without vprofileimage name
+		cluster = "vproappstaging"
+        	service = "serivce name post create"
+
     }
 
     stages {
@@ -109,6 +112,13 @@ pipeline {
               }
             }
           }
+        }
+stage('Deploy to staging ECS') {
+            steps {
+                withAWS(credentials: 'awscreds', region: 'us-east-1') {
+                    sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'                         //this will pull new image that is pushed to ecr to update ecs cluster
+                } 
+            }
         }
 
     }
