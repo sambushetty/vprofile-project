@@ -120,6 +120,6 @@ stage('Deploy to staging ECS') {
                 } 
             }
         }
-
+    }
     }
 
