@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         	 cluster = "vproappprod"
-        	service = "vproappptask-stack-prod"'
+        	service = "vproapptaskprod"
     }
 
     stages {
