@@ -18,8 +18,8 @@ pipeline {
 	    	SONARSERVER = 'sonarserver'
 	    	SONARSCANNER = 'sonarscanner'
 	    	registryCredential = 'ecr:us-east-1:awscreds'
-	    	appRegistry = //docker uri - copy post ecr is created
-		vprofileRegistry = //uri without vprofileimage name
+	    	appRegistry = '905418436473.dkr.ecr.us-east-1.amazonaws.com/vprofileappimage'
+		vprofileRegistry = 'https://905418436473.dkr.ecr.us-east-1.amazonaws.com'
 		cluster = "vproappstaging"
         	service = "serivce name post create"
 
@@ -115,8 +115,8 @@ pipeline {
         }
 stage('Deploy to staging ECS') {
             steps {
-                withAWS(credentials: 'awscreds', region: 'us-east-1') {
-                    sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'                         //this will pull new image that is pushed to ecr to update ecs cluster
+    //            withAWS(credentials: 'awscreds', region: 'us-east-1') {
+      //              sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'                         //this will pull new image that is pushed to ecr to update ecs cluster
                 } 
             }
         }
