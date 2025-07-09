@@ -7,16 +7,17 @@ pipeline {
     
     environment {
         	SNAP_REPO = 'vprofile-snapshot'
-		NEXUS_USER = 'admin'
-		NEXUS_PASS = 'admin'
-		RELEASE_REPO = 'vprofile-release'
-		CENTRAL_REPO = 'vpro-maven-central'
-		NEXUSIP = '172.31.5.129'
-		NEXUSPORT = '8081'
-		NEXUS_GRP_REPO = 'vpro-maven-group'
+		    NEXUS_USER = 'admin'
+		    NEXUS_PASS = 'admin'
+		    RELEASE_REPO = 'vprofile-release'
+		    CENTRAL_REPO = 'vpro-maven-central'
+		    NEXUSIP = '172.31.5.129'
+		    NEXUSPORT = '8081'
+		    NEXUS_GRP_REPO = 'vpro-maven-group'
        		NEXUS_LOGIN = 'nexuslogin'
 	    	SONARSERVER = 'sonarserver'
 	    	SONARSCANNER = 'sonarscanner'
+            NEXUSPASS = credentials('nexuspass')
     }
 
     stages {
@@ -62,7 +63,7 @@ pipeline {
 	}
 	stage('QUALITY GATE'){
             steps {
-                timeout(time: 2, unit: 'HOURS') {
+                timeout(time: 1, unit: 'HOURS') {
                waitForQualityGate abortPipeline: true
             }
             }
@@ -88,5 +89,30 @@ pipeline {
 	)
  }
 }
+stage('ansible deploy to staging')
+{
+  steps {
+    ansiblePlaybook([
+    inventory              : 'ansible/stage.inventory',
+    playbook               : 'ansible/site.yml',
+    installation           : 'ansible',
+    colorized              : true,
+    credentialsId          : 'applogin',
+    disableHostKeyChecking : true,
+    extraVars              : [
+      USER: "admin",
+      PASS: "${NEXUSPASS}",
+      nexusip: "172.31.5.129",
+      reponame: "vprofile-release",
+      groupid: "QA",
+      time: "${env.BUILD_TIMESTAMP}",
+      build: "${env.BUILD_ID}",
+      artifactid: "vproapp",
+      vprofile_version: "vproapp-${env.BUILD_ID}-${env.BUILD_TIMESTAMP}.war"
+    ]
+  ])
+}
+}
+
     }
 }
