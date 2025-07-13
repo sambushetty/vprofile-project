@@ -11,7 +11,7 @@ pipeline {
 		NEXUS_PASS = 'admin'
 		RELEASE_REPO = 'vprofile-release'
 		CENTRAL_REPO = 'vpro-maven-central'
-		NEXUSIP = '172.31.5.129'
+		NEXUSIP = '172.31.14.111'
 		NEXUSPORT = '8081'
 		NEXUS_GRP_REPO = 'vpro-maven-group'
        		NEXUS_LOGIN = 'nexuslogin'
@@ -62,7 +62,7 @@ pipeline {
 	}
 	stage('QUALITY GATE'){
             steps {
-                timeout(time: 2, unit: 'HOURS') {
+                timeout(time: 1, unit: 'HOURS') {
                waitForQualityGate abortPipeline: true
             }
             }
